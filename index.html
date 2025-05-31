@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Refund & Payment Calculator</title>
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+    <link rel="shortcut icon" href="favicon.ico">
     <style>
         :root {
             --primary: #6d9eeb;
@@ -129,10 +132,6 @@
             padding: 10px;
         }
         
-        .btn:hover {
-            opacity: 0.8;
-        }
-        
         .total-row {
             font-weight: bold;
             padding: 12px;
@@ -182,158 +181,166 @@
         <h1>Refund & Payment Calculator</h1>
         
         <div class="calculator-container">
-            <div class="calculator-section" id="returns-section">
+            <section id="returns-section" class="calculator-section">
                 <h2>Refunds</h2>
                 <button class="btn btn-add" onclick="addReturnItem()">+ Add Refund</button>
-                <div id="returns-items">
-                    <!-- Refund items will be added here -->
-                </div>
+                <div id="returns-items"></div>
                 <div class="total-row">
-                    <div style="display: flex; justify-content: space-between;">
+                    <div class="total-display">
                         <span>Total Refunds:</span>
                         <span id="returns-total">$0.00</span>
                     </div>
                 </div>
-            </div>
+            </section>
             
-            <div class="calculator-section" id="payments-section">
+            <section id="payments-section" class="calculator-section">
                 <h2>Payments</h2>
                 <button class="btn btn-add" onclick="addPaymentItem()">+ Add Payment</button>
-                <div id="payments-items">
-                    <!-- Payment items will be added here -->
-                </div>
+                <div id="payments-items"></div>
                 <div class="total-row">
-                    <div style="display: flex; justify-content: space-between;">
+                    <div class="total-display">
                         <span>Total Payments:</span>
                         <span id="payments-total">$0.00</span>
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
         
         <div id="result" class="result-box balanced">
             Enter amounts to calculate balance
         </div>
     </div>
-    
+
     <script>
-        let itemId = 0;
-        let currentSection = null;
-        
-        // Add refund amount
-        function addReturnItem(value = '', focus = true) {
-            const id = `return-${itemId++}`;
-            const item = document.createElement('div');
-            item.className = 'item-row';
-            item.id = id;
-            item.innerHTML = `
-                <div class="input-wrapper">
-                    <span class="currency">$</span>
-                    <input type="number" min="0" step="0.01" placeholder="0.00" value="${value}">
-                </div>
-                <button class="btn btn-remove" onclick="removeItem('${id}')">×</button>
-            `;
+        (function() {
+            let itemId = 0;
+            let currentSection = null;
             
-            const input = item.querySelector('input');
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    currentSection = 'returns';
-                    addReturnItem('', true);
-                }
-            });
-            input.addEventListener('input', calculateTotals);
+            // DOM elements
+            const elements = {
+                returnsItems: document.getElementById('returns-items'),
+                paymentsItems: document.getElementById('payments-items'),
+                returnsTotal: document.getElementById('returns-total'),
+                paymentsTotal: document.getElementById('payments-total'),
+                result: document.getElementById('result')
+            };
             
-            document.getElementById('returns-items').appendChild(item);
-            if (focus) input.focus();
-            calculateTotals();
-        }
-        
-        // Add payment amount
-        function addPaymentItem(value = '', focus = true) {
-            const id = `payment-${itemId++}`;
-            const item = document.createElement('div');
-            item.className = 'item-row';
-            item.id = id;
-            item.innerHTML = `
-                <div class="input-wrapper">
-                    <span class="currency">$</span>
-                    <input type="number" min="0" step="0.01" placeholder="0.00" value="${value}">
-                </div>
-                <button class="btn btn-remove" onclick="removeItem('${id}')">×</button>
-            `;
+            // Initialize calculator
+            function init() {
+                addReturnItem('', false);
+                addPaymentItem('', false);
+                document.querySelector('#returns-items input').focus();
+                currentSection = 'returns';
+            }
             
-            const input = item.querySelector('input');
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    currentSection = 'payments';
-                    addPaymentItem('', true);
-                }
-            });
-            input.addEventListener('input', calculateTotals);
-            
-            document.getElementById('payments-items').appendChild(item);
-            if (focus) input.focus();
-            calculateTotals();
-        }
-        
-        function removeItem(id) {
-            const element = document.getElementById(id);
-            if (element) {
-                element.remove();
+            // Add refund item
+            function addReturnItem(value = '', focus = true) {
+                const id = `return-${itemId++}`;
+                const item = createItemRow(id, value);
+                elements.returnsItems.appendChild(item);
+                if (focus) item.querySelector('input').focus();
                 calculateTotals();
+            }
+            
+            // Add payment item
+            function addPaymentItem(value = '', focus = true) {
+                const id = `payment-${itemId++}`;
+                const item = createItemRow(id, value);
+                elements.paymentsItems.appendChild(item);
+                if (focus) item.querySelector('input').focus();
+                calculateTotals();
+            }
+            
+            // Create item row
+            function createItemRow(id, value) {
+                const item = document.createElement('div');
+                item.className = 'item-row';
+                item.id = id;
+                item.innerHTML = `
+                    <div class="input-wrapper">
+                        <span class="currency">$</span>
+                        <input type="number" min="0" step="0.01" placeholder="0.00" value="${value}">
+                    </div>
+                    <button class="btn btn-remove" onclick="removeItem('${id}')">×</button>
+                `;
                 
-                // Focus on the previous input if available
+                const input = item.querySelector('input');
+                input.addEventListener('keydown', handleEnterKey);
+                input.addEventListener('input', calculateTotals);
+                
+                return item;
+            }
+            
+            // Handle enter key
+            function handleEnterKey(e) {
+                if (e.key === 'Enter') {
+                    currentSection = e.target.closest('#returns-items') ? 'returns' : 'payments';
+                    currentSection === 'returns' ? addReturnItem() : addPaymentItem();
+                }
+            }
+            
+            // Remove item
+            function removeItem(id) {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.remove();
+                    calculateTotals();
+                    focusLastInput();
+                }
+            }
+            
+            // Focus last input
+            function focusLastInput() {
                 const inputs = document.querySelectorAll('input[type="number"]');
                 if (inputs.length > 0) {
                     inputs[inputs.length - 1].focus();
                 }
             }
-        }
-        
-        function formatCurrency(amount) {
-            return '$' + parseFloat(amount).toFixed(2);
-        }
-        
-        function calculateTotals() {
-            // Calculate refunds total
-            let returnsTotal = 0;
-            document.querySelectorAll('#returns-items input').forEach(input => {
-                returnsTotal += parseFloat(input.value) || 0;
-            });
-            document.getElementById('returns-total').textContent = formatCurrency(returnsTotal);
             
-            // Calculate payments total
-            let paymentsTotal = 0;
-            document.querySelectorAll('#payments-items input').forEach(input => {
-                paymentsTotal += parseFloat(input.value) || 0;
-            });
-            document.getElementById('payments-total').textContent = formatCurrency(paymentsTotal);
-            
-            // Display result
-            const resultDiv = document.getElementById('result');
-            const difference = returnsTotal - paymentsTotal;
-            
-            if (difference > 0) {
-                resultDiv.innerHTML = `Customer gets <strong>${formatCurrency(difference)}</strong> refund`;
-                resultDiv.className = 'result-box refund-result';
-            } else if (difference < 0) {
-                resultDiv.innerHTML = `Customer needs to pay <strong>${formatCurrency(Math.abs(difference))}</strong>`;
-                resultDiv.className = 'result-box payment-result';
-            } else {
-                resultDiv.textContent = 'Amounts are balanced';
-                resultDiv.className = 'result-box balanced';
+            // Format currency
+            function formatCurrency(amount) {
+                return '$' + parseFloat(amount).toFixed(2);
             }
-        }
-        
-        // Initialize with empty fields
-        window.onload = function() {
-            addReturnItem('', false);
-            addPaymentItem('', false);
             
-            // Set initial focus
-            document.querySelector('#returns-items input').focus();
-            currentSection = 'returns';
-        };
+            // Calculate totals
+            function calculateTotals() {
+                const returnsTotal = calculateSectionTotal('#returns-items');
+                const paymentsTotal = calculateSectionTotal('#payments-items');
+                
+                elements.returnsTotal.textContent = formatCurrency(returnsTotal);
+                elements.paymentsTotal.textContent = formatCurrency(paymentsTotal);
+                
+                updateResult(returnsTotal - paymentsTotal);
+            }
+            
+            // Calculate section total
+            function calculateSectionTotal(selector) {
+                return Array.from(document.querySelectorAll(`${selector} input`))
+                    .reduce((total, input) => total + (parseFloat(input.value) || 0), 0);
+            }
+            
+            // Update result display
+            function updateResult(difference) {
+                if (difference > 0) {
+                    elements.result.innerHTML = `Customer gets <strong>${formatCurrency(difference)}</strong> refund`;
+                    elements.result.className = 'result-box refund-result';
+                } else if (difference < 0) {
+                    elements.result.innerHTML = `Customer needs to pay <strong>${formatCurrency(Math.abs(difference))}</strong>`;
+                    elements.result.className = 'result-box payment-result';
+                } else {
+                    elements.result.textContent = 'Amounts are balanced';
+                    elements.result.className = 'result-box balanced';
+                }
+            }
+            
+            // Expose functions to global scope
+            window.addReturnItem = addReturnItem;
+            window.addPaymentItem = addPaymentItem;
+            window.removeItem = removeItem;
+            
+            // Initialize on load
+            window.addEventListener('DOMContentLoaded', init);
+        })();
     </script>
 </body>
 </html>
