@@ -1,346 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Refund & Payment Calculator</title>
-    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
-    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
-    <link rel="shortcut icon" href="favicon.ico">
-    <style>
-        :root {
-            --primary: #6d9eeb;
-            --secondary: #8ab4f8;
-            --refund: #81c784;
-            --payment: #f48fb1;
-            --warning: #ffb74d;
-            --dark-bg: #121212;
-            --dark-surface: #1e1e1e;
-            --dark-text: #e0e0e0;
-            --dark-border: #333;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark-bg);
-            margin: 0;
-            padding: 20px;
-            color: var(--dark-text);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: var(--dark-surface);
-            padding: 25px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.3);
-            border: 1px solid var(--dark-border);
-        }
-        
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        
-        .calculator-container {
-            display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        
-        .calculator-section {
-            flex: 1;
-            background: #252525;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 8px rgba(0,0,0,0.2);
-            border: 1px solid var(--dark-border);
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-top: 0;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary);
-            font-size: 1.3em;
-        }
-        
-        .item-row {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 12px;
-            align-items: center;
-        }
-        
-        .input-wrapper {
-            position: relative;
-            flex-grow: 1;
-        }
-        
-        .input-wrapper input {
-            width: 100%;
-            padding: 10px 10px 10px 25px;
-            background-color: #333;
-            border: 1px solid #444;
-            border-radius: 4px;
-            color: var(--dark-text);
-            -moz-appearance: textfield;
-        }
-        
-        .input-wrapper input::-webkit-outer-spin-button,
-        .input-wrapper input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        
-        .input-wrapper input:focus {
-            outline: 2px solid var(--primary);
-        }
-        
-        .currency {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-add {
-            background-color: var(--primary);
-            color: white;
-            margin-bottom: 15px;
-            width: 100%;
-        }
-        
-        .btn-remove {
-            background-color: #444;
-            color: white;
-            min-width: 36px;
-            padding: 10px;
-        }
-        
-        .total-row {
-            font-weight: bold;
-            padding: 12px;
-            background-color: #333;
-            border-radius: 4px;
-            margin-top: 20px;
-            font-size: 1.1em;
-        }
-        
-        .result-box {
-            padding: 25px;
-            text-align: center;
-            border-radius: 8px;
-            font-size: 1.3em;
-            font-weight: bold;
-            margin-top: 30px;
-            border: 2px solid;
-        }
-        
-        .refund-result {
-            background-color: #1b3a1f;
-            color: var(--refund);
-            border-color: var(--refund);
-        }
-        
-        .payment-result {
-            background-color: #3a1b1b;
-            color: var(--payment);
-            border-color: var(--payment);
-        }
-        
-        .balanced {
-            background-color: #2a2a2a;
-            color: var(--warning);
-            border-color: var(--warning);
-        }
-        
-        @media (max-width: 768px) {
-            .calculator-container {
-                flex-direction: column;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Refund & Payment Calculator</title>
+  <style>
+    :root {
+      --primary: #6d9eeb;
+      --secondary: #8ab4f8;
+      --refund: #81c784;
+      --payment: #f48fb1;
+      --warning: #ffb74d;
+      --danger: #f44336;
+      --dark-bg: #121212;
+      --dark-surface: #1e1e1e;
+      --dark-text: #e0e0e0;
+      --dark-border: #333;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--dark-bg);
+      margin: 0;
+      padding: 20px;
+      color: var(--dark-text);
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: var(--dark-surface);
+      padding: 25px;
+      border-radius: 10px;
+      border: 1px solid var(--dark-border);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary);
+    }
+
+    .calculator-container {
+      display: flex;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .calculator-section {
+      flex: 1;
+      background: #252525;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--dark-border);
+    }
+
+    h2 {
+      color: var(--primary);
+      margin-top: 0;
+      border-bottom: 2px solid var(--secondary);
+      padding-bottom: 10px;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 10px;
+    }
+
+    .input-wrapper {
+      flex-grow: 1;
+      position: relative;
+    }
+
+    .input-wrapper input {
+      width: 100%;
+      padding: 10px 10px 10px 25px;
+      background-color: #333;
+      color: var(--dark-text);
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+
+    .currency {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #999;
+    }
+
+    .btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+
+    .btn-add {
+      background-color: var(--primary);
+      color: white;
+      width: 100%;
+    }
+
+    .btn-remove {
+      background-color: #444;
+      color: white;
+      padding: 8px;
+      min-width: 30px;
+    }
+
+    .btn-clear {
+      background-color: var(--danger);
+      color: white;
+      margin-top: 15px;
+      padding: 5px 10px;
+      font-size: 0.9em;
+      display: none;
+    }
+
+    .total-row {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .result-box {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      border: 2px solid;
+    }
+
+    .refund-result {
+      background-color: #1b3a1f;
+      color: var(--refund);
+      border-color: var(--refund);
+    }
+
+    .payment-result {
+      background-color: #3a1b1b;
+      color: var(--payment);
+      border-color: var(--payment);
+    }
+
+    .balanced {
+      background-color: #2a2a2a;
+      color: var(--warning);
+      border-color: var(--warning);
+    }
+
+    @media (max-width: 768px) {
+      .calculator-container {
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Refund & Payment Calculator</h1>
-        
-        <div class="calculator-container">
-            <section id="returns-section" class="calculator-section">
-                <h2>Refunds</h2>
-                <button class="btn btn-add" onclick="addReturnItem()">+ Add Refund</button>
-                <div id="returns-items"></div>
-                <div class="total-row">
-                    <div class="total-display">
-                        <span>Total Refunds:</span>
-                        <span id="returns-total">$0.00</span>
-                    </div>
-                </div>
-            </section>
-            
-            <section id="payments-section" class="calculator-section">
-                <h2>Payments</h2>
-                <button class="btn btn-add" onclick="addPaymentItem()">+ Add Payment</button>
-                <div id="payments-items"></div>
-                <div class="total-row">
-                    <div class="total-display">
-                        <span>Total Payments:</span>
-                        <span id="payments-total">$0.00</span>
-                    </div>
-                </div>
-            </section>
-        </div>
-        
-        <div id="result" class="result-box balanced">
-            Enter amounts to calculate balance
-        </div>
+  <div class="container">
+    <h1>Refund & Payment Calculator</h1>
+    <div class="calculator-container">
+      <section id="returns-section" class="calculator-section">
+        <h2>Refunds</h2>
+        <button class="btn btn-add" onclick="addReturnItem()">+ Add Refund</button>
+        <div id="returns-items"></div>
+        <div class="total-row">Total Refunds: <span id="returns-total">$0.00</span></div>
+      </section>
+      <section id="payments-section" class="calculator-section">
+        <h2>Payments</h2>
+        <button class="btn btn-add" onclick="addPaymentItem()">+ Add Payment</button>
+        <div id="payments-items"></div>
+        <div class="total-row">Total Payments: <span id="payments-total">$0.00</span></div>
+      </section>
     </div>
+    <div id="result" class="result-box balanced">Enter amounts to calculate balance</div>
+    <button class="btn btn-clear" id="clear-btn" onclick="clearAll()">Clear All</button>
+  </div>
+  <script>
+    (function() {
+      let itemId = 0;
+      const elements = {
+        returnsItems: document.getElementById('returns-items'),
+        paymentsItems: document.getElementById('payments-items'),
+        returnsTotal: document.getElementById('returns-total'),
+        paymentsTotal: document.getElementById('payments-total'),
+        result: document.getElementById('result'),
+        clearBtn: document.getElementById('clear-btn')
+      };
 
-    <script>
-        (function() {
-            let itemId = 0;
-            let currentSection = null;
-            
-            // DOM elements
-            const elements = {
-                returnsItems: document.getElementById('returns-items'),
-                paymentsItems: document.getElementById('payments-items'),
-                returnsTotal: document.getElementById('returns-total'),
-                paymentsTotal: document.getElementById('payments-total'),
-                result: document.getElementById('result')
-            };
-            
-            // Initialize calculator
-            function init() {
-                addReturnItem('', false);
-                addPaymentItem('', false);
-                document.querySelector('#returns-items input').focus();
-                currentSection = 'returns';
-            }
-            
-            // Add refund item
-            function addReturnItem(value = '', focus = true) {
-                const id = `return-${itemId++}`;
-                const item = createItemRow(id, value);
-                elements.returnsItems.appendChild(item);
-                if (focus) item.querySelector('input').focus();
-                calculateTotals();
-            }
-            
-            // Add payment item
-            function addPaymentItem(value = '', focus = true) {
-                const id = `payment-${itemId++}`;
-                const item = createItemRow(id, value);
-                elements.paymentsItems.appendChild(item);
-                if (focus) item.querySelector('input').focus();
-                calculateTotals();
-            }
-            
-            // Create item row
-            function createItemRow(id, value) {
-                const item = document.createElement('div');
-                item.className = 'item-row';
-                item.id = id;
-                item.innerHTML = `
-                    <div class="input-wrapper">
-                        <span class="currency">$</span>
-                        <input type="number" min="0" step="0.01" placeholder="0.00" value="${value}">
-                    </div>
-                    <button class="btn btn-remove" onclick="removeItem('${id}')">×</button>
-                `;
-                
-                const input = item.querySelector('input');
-                input.addEventListener('keydown', handleEnterKey);
-                input.addEventListener('input', calculateTotals);
-                
-                return item;
-            }
-            
-            // Handle enter key
-            function handleEnterKey(e) {
-                if (e.key === 'Enter') {
-                    currentSection = e.target.closest('#returns-items') ? 'returns' : 'payments';
-                    currentSection === 'returns' ? addReturnItem() : addPaymentItem();
-                }
-            }
-            
-            // Remove item
-            function removeItem(id) {
-                const element = document.getElementById(id);
-                if (element) {
-                    element.remove();
-                    calculateTotals();
-                    focusLastInput();
-                }
-            }
-            
-            // Focus last input
-            function focusLastInput() {
-                const inputs = document.querySelectorAll('input[type="number"]');
-                if (inputs.length > 0) {
-                    inputs[inputs.length - 1].focus();
-                }
-            }
-            
-            // Format currency
-            function formatCurrency(amount) {
-                return '$' + parseFloat(amount).toFixed(2);
-            }
-            
-            // Calculate totals
-            function calculateTotals() {
-                const returnsTotal = calculateSectionTotal('#returns-items');
-                const paymentsTotal = calculateSectionTotal('#payments-items');
-                
-                elements.returnsTotal.textContent = formatCurrency(returnsTotal);
-                elements.paymentsTotal.textContent = formatCurrency(paymentsTotal);
-                
-                updateResult(returnsTotal - paymentsTotal);
-            }
-            
-            // Calculate section total
-            function calculateSectionTotal(selector) {
-                return Array.from(document.querySelectorAll(`${selector} input`))
-                    .reduce((total, input) => total + (parseFloat(input.value) || 0), 0);
-            }
-            
-            // Update result display
-            function updateResult(difference) {
-                if (difference > 0) {
-                    elements.result.innerHTML = `Customer gets <strong>${formatCurrency(difference)}</strong> refund`;
-                    elements.result.className = 'result-box refund-result';
-                } else if (difference < 0) {
-                    elements.result.innerHTML = `Customer needs to pay <strong>${formatCurrency(Math.abs(difference))}</strong>`;
-                    elements.result.className = 'result-box payment-result';
-                } else {
-                    elements.result.textContent = 'Amounts are balanced';
-                    elements.result.className = 'result-box balanced';
-                }
-            }
-            
-            // Expose functions to global scope
-            window.addReturnItem = addReturnItem;
-            window.addPaymentItem = addPaymentItem;
-            window.removeItem = removeItem;
-            
-            // Initialize on load
-            window.addEventListener('DOMContentLoaded', init);
-        })();
-    </script>
+      function init() {
+        addReturnItem('', false);
+        addPaymentItem('', false);
+      }
+
+      function addReturnItem(value = '', focus = true) {
+        const id = `return-${itemId++}`;
+        const item = createItemRow(id, value);
+        elements.returnsItems.appendChild(item);
+        if (focus) item.querySelector('input').focus();
+        calculateTotals();
+      }
+
+      function addPaymentItem(value = '', focus = true) {
+        const id = `payment-${itemId++}`;
+        const item = createItemRow(id, value);
+        elements.paymentsItems.appendChild(item);
+        if (focus) item.querySelector('input').focus();
+        calculateTotals();
+      }
+
+      function createItemRow(id, value) {
+        const item = document.createElement('div');
+        item.className = 'item-row';
+        item.id = id;
+        item.innerHTML = `
+          <div class="input-wrapper">
+            <span class="currency">$</span>
+            <input type="number" min="0" step="0.01" placeholder="0.00" value="${value}" />
+          </div>
+          <button class="btn btn-remove" onclick="removeItem('${id}')">&times;</button>
+        `;
+        const input = item.querySelector('input');
+        input.addEventListener('input', calculateTotals);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            if (item.id.startsWith('return')) addReturnItem();
+            else addPaymentItem();
+          }
+        });
+        return item;
+      }
+
+      function removeItem(id) {
+        const el = document.getElementById(id);
+        if (el) {
+          el.remove();
+          calculateTotals();
+        }
+      }
+
+      function clearAll() {
+        elements.returnsItems.innerHTML = '';
+        elements.paymentsItems.innerHTML = '';
+        addReturnItem('', false);
+        addPaymentItem('', false);
+        calculateTotals();
+      }
+
+      function formatCurrency(num) {
+        return '$' + parseFloat(num).toFixed(2);
+      }
+
+      function calculateTotals() {
+        const refunds = getTotal(elements.returnsItems);
+        const payments = getTotal(elements.paymentsItems);
+        elements.returnsTotal.textContent = formatCurrency(refunds);
+        elements.paymentsTotal.textContent = formatCurrency(payments);
+        const difference = refunds - payments;
+
+        if (difference > 0) {
+          elements.result.textContent = `Customer gets ${formatCurrency(difference)} refund`;
+          elements.result.className = 'result-box refund-result';
+        } else if (difference < 0) {
+          elements.result.textContent = `Customer needs to pay ${formatCurrency(Math.abs(difference))}`;
+          elements.result.className = 'result-box payment-result';
+        } else {
+          elements.result.textContent = 'Amounts are balanced';
+          elements.result.className = 'result-box balanced';
+        }
+
+        // Show clear button only if there are non-zero entries
+        const hasNumbers = [...document.querySelectorAll('input[type="number"]')]
+          .some(input => parseFloat(input.value));
+        elements.clearBtn.style.display = hasNumbers ? 'inline-block' : 'none';
+      }
+
+      function getTotal(container) {
+        return Array.from(container.querySelectorAll('input'))
+          .reduce((acc, input) => acc + (parseFloat(input.value) || 0), 0);
+      }
+
+      window.addReturnItem = addReturnItem;
+      window.addPaymentItem = addPaymentItem;
+      window.removeItem = removeItem;
+      window.clearAll = clearAll;
+
+      window.addEventListener('DOMContentLoaded', init);
+    })();
+  </script>
 </body>
 </html>
